@@ -6,7 +6,7 @@ import { format, parse } from 'url';
 
 import { ChildProcess, ExecException, execFile } from 'child_process';
 import { apiName, WindowTypes } from '../common/api-interface';
-import { isDevEnv, isMac, isWindowsOS } from '../common/env';
+import { isDevEnv, isMac, isNodeEnv, isWindowsOS } from '../common/env';
 import { i18n, LocaleType } from '../common/i18n';
 import { logger } from '../common/logger';
 import { getCommandLineArgs, getGuid } from '../common/utils';
@@ -99,7 +99,6 @@ export class WindowHandler {
         this.windows = {};
         this.contextIsolation = contextIsolation || false;
         this.backgroundThrottling = !customFlags.disableThrottling;
-        this.contextIsolation = contextIsolation || false;
         this.isCustomTitleBar = isWindowsOS && this.config.isCustomTitleBar;
         this.windowOpts = {
             ...this.getWindowOpts({
@@ -762,6 +761,7 @@ export class WindowHandler {
                 minimizable: false,
                 maximizable: false,
                 closable: false,
+                title: 'Screen Sharing Indicator - Symphony',
             }, {
                 devTools: false,
             }), ...{winKey: streamId},
@@ -1006,9 +1006,9 @@ export class WindowHandler {
     private getWindowOpts(windowOpts: Electron.BrowserWindowConstructorOptions, webPreferences: Electron.WebPreferences): ICustomBrowserWindowConstructorOpts {
         const defaultPreferencesOpts = {
             ...{
-                sandbox: true,
-                nodeIntegration: false,
-                contextIsolation: this.contextIsolation,
+                sandbox: !isNodeEnv,
+                nodeIntegration: isNodeEnv,
+                contextIsolation: isNodeEnv ? false : this.contextIsolation,
                 backgroundThrottling: this.backgroundThrottling,
             }, ...webPreferences,
         };

@@ -4,6 +4,7 @@ import { config } from '../app/config-handler';
 import { createComponentWindow, windowExists } from '../app/window-utils';
 import { AnimationQueue } from '../common/animation-queue';
 import { apiName, INotificationData, NotificationActions } from '../common/api-interface';
+import { isNodeEnv } from '../common/env';
 import { logger } from '../common/logger';
 import NotificationHandler from './notification-handler';
 
@@ -421,8 +422,8 @@ class Notification extends NotificationHandler {
             acceptFirstMouse: true,
             title: 'Notification - Symphony',
             webPreferences: {
-                sandbox: true,
-                nodeIntegration: false,
+                sandbox: !isNodeEnv,
+                nodeIntegration: isNodeEnv,
                 devTools: true,
             },
         };

@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { format, parse } from 'url';
 
-import { isDevEnv, isLinux, isMac } from '../common/env';
+import { isDevEnv, isLinux, isMac, isNodeEnv } from '../common/env';
 import { i18n, LocaleType } from '../common/i18n';
 import { logger } from '../common/logger';
 import { getGuid } from '../common/utils';
@@ -117,6 +117,8 @@ export const createComponentWindow = (
         width: 300,
         ...opts,
         webPreferences: {
+            sandbox: !isNodeEnv,
+            nodeIntegration: isNodeEnv,
             preload: path.join(__dirname, '../renderer/_preload-component.js'),
             devTools: false,
         },
